@@ -7,5 +7,5 @@ provider "flux" {
   }
 }
 resource "flux/bootstrap_git" "this" {
-  path = "kubernetes/clusters/sandbox"
+  path = "fluxcd/clusters/sandbox"
 }

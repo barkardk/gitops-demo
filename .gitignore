@@ -1,0 +1,5 @@
+terraform/*.tfplan
+terraform/*.hcl
+terraform/tfplan.json
+terraform/*.tfstate*
+terraform/.terraform*

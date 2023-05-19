@@ -1,16 +1,7 @@
-TF_VAR_project_id=$(shell gcloud config get-value project)
-
-init:
-	cd terraform && terraform init
-
-configure:
-	cd terraform && terraform plan -out apply.tfplan
-
-apply:
-	cd terraform && terraform apply -auto-approve -var-file=terraform.tfvars
-
-show:
-	cd terraform && terraform show -json apply.tfplan | jq > tfplan.json
-
+## Root makefile
+.DEFAULT_GOAL := help
+.PHONY: help
+help: ## Help
+	@grep -E '^[a-zA-Z\\._-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}'
 
 

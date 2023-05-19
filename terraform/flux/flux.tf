@@ -6,6 +6,6 @@ provider "flux" {
     url = var.repository_url
   }
 }
-resource "flux/bootstrap_git" "this" {
+resource "flux_bootstrap_git" "this" {
   path = "fluxcd/clusters/sandbox"
 }

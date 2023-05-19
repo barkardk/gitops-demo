@@ -1,5 +1,7 @@
-terraform/*.tfplan
-terraform/*.hcl
-terraform/tfplan.json
-terraform/*.tfstate*
-terraform/.terraform*
+**/*.tfplan
+**/*.hcl
+**/*tfplan.json
+**/*.tfstate*
+**/.terraform*
+**/compute-instance.json
+**/.ssh*

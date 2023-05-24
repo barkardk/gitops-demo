@@ -1,13 +1,14 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ .Values.adminAccount.name }}
-  namespace: {{ .Values.adminAccount.name }}
+  name: admin
+  namespace: admin
 spec:
-  serviceAccountName: {{ .Values.adminAccount.name }}
+  serviceAccountName: admin
   containers:
     - image: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
-      name: {{ .Values.adminAccount.name }}
+      imagePullPolicy: IfNotPresent
+      name: admin
       resources:
         requests:
           cpu: 100m
@@ -18,9 +19,9 @@ spec:
       tty: true
       volumeMounts:
         - mountPath: "/var/secrets"
-          name: bq-readonly-key
+          name: mysecret
   volumes:
-    - name: bq-readonly-key
+    - name: mysecret
       csi:
         driver: secrets-store.csi.k8s.io
         readOnly: true

@@ -1,3 +1,10 @@
+#resource "google_project" "kba-sandbox" {
+#
+#  # Enable Workload Identity
+#  workload_identity_config {
+#    identity_namespace = "${var.project_id}.svc.id.goog"
+#  }
+#}
 # GKE cluster
 resource "google_container_cluster" "primary" {
   name = "${var.project_id}-${var.project_suffix}-gke"
@@ -35,14 +42,7 @@ resource "google_container_node_pool" "primary_nodes" {
     metadata = {
       disable-legacy-endpoints = "true"
     }
-    workload_metadata_config {
-      node_metadata = "GKE_METADATA_SERVER"
-      mode          = ""
-    }
+
   }
 }
 
-# Enable Workload Identity
-workload_identity_config {
-  identity_namespace = "${var.project_id}.svc.id.goog"
-}

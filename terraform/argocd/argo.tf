@@ -5,20 +5,21 @@ provider "kubectl" {
   load_config_file       = false
 }
 
-provider "kustomization" {
-  kubeconfig_path = "~/.kube/config"
+
+data "kubectl_filename_list" "install_argocd" {
+  pattern = "../../argocd/manifests/bootstrap/argocd/*.yaml"
 }
 
-module "bootstrap" {
-
+data "kubectl_filename_list" "install_argocd_custom_resources" {
+  pattern = "../../argocd/manifest/bootstrap/argocd/applications/*.yaml"
 }
-data "kubectl_file_documents" "install" {
-  content = file("../../argocd/manifests/bootstrap/install.yaml")
-}
-
 
 resource "kubectl_manifest" "argocd" {
-  count              = length(data.kubectl_file_documents.install.documents)
-  yaml_body          = element(data.kubectl_file_documents.install.documents, count.index)
+  count              = length(data.kubectl_filename_list.install_argocd.matches)
+  yaml_body          = file(element(data.kubectl_filename_list.install_argocd.matches, count.index))
   override_namespace = "argocd"
+}
+resource "kubectl_manifest" "argocd_custom_resources" {
+  count              = length(data.kubectl_filename_list.install_argocd_custom_resources.matches)
+  yaml_body          = file(element(data.kubectl_filename_list.install_argocd_custom_resources.matches, count.index))
 }

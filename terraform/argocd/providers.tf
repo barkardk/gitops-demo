@@ -7,11 +7,7 @@ terraform {
     }
     kubectl = {
       source  = "gavinbunney/kubectl"
-      version = ">= 1.7.0"
-    }
-    kustomization = {
-      source  = "kbst/kustomization"
-      version = "0.9.0"
+      version = ">= 1.14.0"
     }
   }
   backend "gcs" {

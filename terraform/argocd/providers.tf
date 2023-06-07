@@ -1,17 +1,22 @@
 terraform {
+  required_version = ">= 0.14"
   required_providers {
     google = {
-      source = "hashicorp/google"
-      version = "4.27.0"
+      source  = "hashicorp/google"
+      version = ">= 4.27.0"
     }
-    kubectl =  {
-      load_config_file       = true
-      config_path = "~/.kube/config"
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
+    kustomization = {
+      source  = "kbst/kustomization"
+      version = "0.9.0"
     }
   }
-  required_version = ">= 0.14"
   backend "gcs" {
-    bucket = "terraform-backend-${var.project_id}-${var.project_name}"
+    bucket = "changeme"
     prefix = "argocd-terraform"
   }
 }
+

@@ -1,16 +1,24 @@
-module "argocd" {
-  source = "github.com/bloodorangeio/terraform-kubernetes-argocd"
+provider "kubectl" {
+  host                   = module.gke_auth.host
+  cluster_ca_certificate = module.gke_auth.cluster_ca_certificate
+  token                  = module.gke_auth.token
+  load_config_file       = false
+}
 
-  namespace = "argocd"
+provider "kustomization" {
+  kubeconfig_path = "~/.kube/config"
+}
 
-  # Set Kubernetes provider to the same as your Argo CD target Kubernetes cluster.
-  k8s_provider = "provider.kubernetes"
+module "bootstrap" {
 
-  # Replace the following variables with your own values.
-  argocd_server_hostname = "argocd.example.com"
-  argocd_admin_password = "my-secure-password"
-  enable_tls = true
+}
+data "kubectl_file_documents" "install" {
+  content = file("../../argocd/manifests/bootstrap/install.yaml")
+}
 
-  # (Optional) If your Kubernetes cluster is secured using RBAC, set this parameter to true.
-  enable_rbac = true
+
+resource "kubectl_manifest" "argocd" {
+  count              = length(data.kubectl_file_documents.install.documents)
+  yaml_body          = element(data.kubectl_file_documents.install.documents, count.index)
+  override_namespace = "argocd"
 }

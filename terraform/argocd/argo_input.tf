@@ -4,8 +4,10 @@ variable repository_url {
   description = "Full url to source code repository"
 }
 
+
 variable argocd_namespace {
   type = string
   default = "argocd"
   description = "Default argocd namespace"
 }
+

@@ -5,7 +5,6 @@ provider "kubectl" {
   load_config_file       = false
 }
 
-
 data "kubectl_file_documents" "create_argocd_ns" {
   content = file("../../argocd/manifests/bootstrap/argocd/namespace.yaml")
 }

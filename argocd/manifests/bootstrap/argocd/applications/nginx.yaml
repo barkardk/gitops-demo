@@ -8,9 +8,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com:barkardk/gitops-demo-flux.git
+    repoURL: https://github.com/barkardk/gitops-demo-flux
     targetRevision: HEAD
-    path: argocd/manifests/kustomize/apps/nginx
+    path: argocd/manifests/apps/kustomize/apps/nginx
   destination:
     server: https://kubernetes.default.svc
     namespace: default

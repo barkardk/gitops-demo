@@ -13,7 +13,7 @@ spec:
     path: argocd/kustomize/apps/nginx
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: nginx
   syncPolicy:
     automated:
       selfHeal: true

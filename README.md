@@ -1,4 +1,10 @@
 # Gitops demo repository
+## To setup Argocd demo 
+```bash 
+cd terraform/argocd
+make apply
+```
+
 ## To setup Fluxcd demo 
 
 ```bash 

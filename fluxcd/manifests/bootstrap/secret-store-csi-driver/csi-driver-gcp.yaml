@@ -1,0 +1,110 @@
+---
+# Source: secrets-store-csi-driver-provider-gcp/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: secrets-store-csi-driver-provider-gcp
+  namespace: kube-system
+  labels:
+    helm.sh/chart: secrets-store-csi-driver-provider-gcp-0.1.0
+    app: csi-secrets-store-provider-gcp
+    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: secrets-store-csi-driver-provider-gcp/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: secrets-store-csi-driver-provider-gcp-role
+  labels:
+    helm.sh/chart: secrets-store-csi-driver-provider-gcp-0.1.0
+    app: csi-secrets-store-provider-gcp
+    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/managed-by: Helm
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - serviceaccounts/token
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - serviceaccounts
+    verbs:
+      - get
+---
+# Source: secrets-store-csi-driver-provider-gcp/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: secrets-store-csi-driver-provider-gcp-rolebinding
+  labels:
+    helm.sh/chart: secrets-store-csi-driver-provider-gcp-0.1.0
+    app: csi-secrets-store-provider-gcp
+    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: secrets-store-csi-driver-provider-gcp-role
+subjects:
+  - kind: ServiceAccount
+    name: secrets-store-csi-driver-provider-gcp
+    namespace: kube-system
+---
+# Source: secrets-store-csi-driver-provider-gcp/templates/daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: csi-secrets-store-provider-gcp
+  namespace: kube-system
+  labels:
+    helm.sh/chart: secrets-store-csi-driver-provider-gcp-0.1.0
+    app: csi-secrets-store-provider-gcp
+    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: csi-secrets-store-provider-gcp
+  template:
+    metadata:
+      labels:
+        app: csi-secrets-store-provider-gcp
+    spec:
+      serviceAccountName: secrets-store-csi-driver-provider-gcp
+      containers:
+        - name: provider
+          image: "us-docker.pkg.dev/secretmanager-csi/secrets-store-csi-driver-provider-gcp/plugin@sha256:b7dde5ed536b2c6500c9237e14f6851cf8a2ff6d7a72656c3741be38e2cddf4d"
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: 50m
+              memory: 100Mi
+            requests:
+              cpu: 50m
+              memory: 100Mi
+          env:
+            - name: TARGET_DIR
+              value: "/etc/kubernetes/secrets-store-csi-providers"
+          volumeMounts:
+            - mountPath: "/etc/kubernetes/secrets-store-csi-providers"
+              name: providervol
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /live
+              port: 8095
+            initialDelaySeconds: 5
+            timeoutSeconds: 10
+            periodSeconds: 30
+      volumes:
+        - name: providervol
+          hostPath:
+            path: /etc/kubernetes/secrets-store-csi-providers
+      nodeSelector:
+        kubernetes.io/os: linux

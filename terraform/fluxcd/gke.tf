@@ -1,3 +1,4 @@
+
 # GKE cluster
 resource "google_container_cluster" "primary" {
   name                     = var.cluster_name
@@ -9,12 +10,18 @@ resource "google_container_cluster" "primary" {
   initial_node_count       = 1
   network                  = google_compute_network.vpc.name
   subnetwork               = google_compute_subnetwork.subnet.name
+  workload_identity_config {
+    workload_pool = "${var.project_id}.svc.id.goog"
+  }
 }
 
 resource "google_service_account" "primary" {
   account_id   = "${var.cluster_name}-sa"
   display_name = "GKE cluster ${var.cluster_name} Service Account"
 }
+
+
+
 
 resource "google_container_node_pool" "primary_nodes" {
   name       = google_container_cluster.primary.name
@@ -48,6 +55,7 @@ resource "time_sleep" "wait_30_seconds" {
   depends_on      = [google_container_cluster.primary]
   create_duration = "30s"
 }
+
 
 module "gke_auth" {
   depends_on           = [time_sleep.wait_30_seconds]

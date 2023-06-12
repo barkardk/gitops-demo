@@ -20,13 +20,3 @@ variable "cluster_name" {
   type        = string
   description = "cluster_name"
 }
-variable "secret_sa" {
-  type = string
-  default = "secret-sa"
-  description = "Service account used to mount secret fro GCP to k8s"
-}
-variable "csi_driver_service_account" {
-  type = string
-  default = "secrets-store-csi-driver-provider-gcp"
-  description = "Service account created by the csi driver"
-}

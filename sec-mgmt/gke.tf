@@ -9,7 +9,13 @@ resource "google_container_cluster" "primary" {
   initial_node_count = 1
   network = google_compute_network.vpc.name
   subnetwork = google_compute_subnetwork.subnet.name
+  # Enable Workload Identity
+  workload_identity_config {
+    identity_namespace = "${var.project_id}.svc.id.goog"
+  }
 }
+
+
 
 resource "google_container_node_pool" "primary_nodes" {
   name = google_container_cluster.primary.name

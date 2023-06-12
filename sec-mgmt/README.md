@@ -190,19 +190,8 @@ PROJ=$(gcloud config get-value project)
 # Make sure to enable workload identity
 REGION=$(grep region terraform.tfvars | awk -F\" '{print $2}') 
 $ gcloud container clusters update ${PROJ}-gke --workload-pool=${PROJ}.svc.id.goog --region ${REGION}
-
-$ gcloud iam service-accounts add-iam-policy-binding readonly-secrets@${PROJ}.iam.gserviceaccount.com --member=serviceAccount:${PROJ}.svc.id.goog[readonly/readonly] --role='roles/iam.workloadIdentityUser'
-$ gcloud iam service-accounts add-iam-policy-binding readwrite-secrets@${PROJ}.iam.gserviceaccount.com --member=serviceAccount:"${PROJ}".svc.id.goog[admin/admin] --role='roles/iam.workloadIdentityUser'
-```
-
-In case of errors of insufficcient privileges
-```text
-Access scopes
-You must stop the VM instance to edit its API access scopes
-
-Allow default access
-
-Allow full access to all Cloud APIs 
+$ gcloud secrets add-iam-policy-binding flux-secret --member=serviceAccount:secret-sa@kba-sandbox.iam.gserviceaccount.com --role='roles/secretmanager.secretAccessor'
+$ gcloud iam service-accounts add-iam-policy-binding secret-sa@kba-sandbox.iam.gserviceaccount.com --member=serviceAccount:kba-sandbox.svc.id.goog[admin/admin] --role='roles/iam.workloadIdentityUser'
 ```
 
 ## Test the secrets
@@ -211,8 +200,21 @@ Allow full access to all Cloud APIs
 #### For RO 
 Open a shell 
 ```bash
+kubectl apply -f - <<EOF 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: readonly
+  namespace: flux-system
+spec:
+  containers:
+  - image: gcr.io/google.com/cloudsdktool/cloud-sdk:433.0.1-slim
+    name: readonly
+    command:  ["/bin/sh", "-ec", "sleep 1000"]
+  serviceAccountName: secret-sa
+EOF
 kubectl exec -it readonly --namespace=readonly -- /bin/bash
-gcloud secrets versions access 1 --secret=bq-readonly-key
+gcloud secrets versions access 1 --secret=flux-secret
 ```
 As this is a readonly secret, trying to write or overwrite it will fail
 ```bash

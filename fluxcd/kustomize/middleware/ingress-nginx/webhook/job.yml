@@ -1,0 +1,96 @@
+---
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: nginx-create
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/component: webhook
+
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ingress-nginx
+        app.kubernetes.io/component: webhook
+
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: nginx-webhook
+
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 2000
+        fsGroup: 2000
+
+      containers:
+        - name: create
+          image: nginx-certs
+          imagePullPolicy: IfNotPresent
+
+          securityContext:
+            allowPrivilegeEscalation: false
+
+          args:
+            - create
+            - --host=nginx-webhook,nginx-webhook.$(POD_NAMESPACE).svc
+            - --namespace=$(POD_NAMESPACE)
+            - --secret-name=nginx-webhook
+
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+
+...
+---
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: nginx-patch
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/component: webhook
+
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ingress-nginx
+        app.kubernetes.io/component: webhook
+
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: nginx-webhook
+
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 2000
+        fsGroup: 2000
+
+      containers:
+        - name: patch
+          image: nginx-certs
+          imagePullPolicy: IfNotPresent
+
+          securityContext:
+            allowPrivilegeEscalation: false
+
+          args:
+            - patch
+            - --webhook-name=nginx-webhook
+            - --namespace=$(POD_NAMESPACE)
+            - --patch-mutating=false
+            - --secret-name=nginx-webhook
+            - --patch-failure-policy=Fail
+
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+
+...

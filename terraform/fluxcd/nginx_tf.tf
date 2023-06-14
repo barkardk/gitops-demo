@@ -1,8 +1,25 @@
+provider "kubernetes" {
+  config_path    = "~/.kube/config"
+}
+
+resource "kubernetes_namespace_v1" "nginx" {
+  metadata {
+    annotations = {
+      name = "prometheus.io/scrape: true"
+    }
+
+    labels = {
+      app = "nginx"
+    }
+
+    name = "nginx-tf"
+  }
+}
+
 resource "kubernetes_deployment_v1" "nginx" {
   metadata {
     name = "nginx"
     namespace = "nginx-tf"
-    app = "nginx"
   }
 
   spec {
@@ -10,7 +27,7 @@ resource "kubernetes_deployment_v1" "nginx" {
 
     selector {
       match_labels = {
-        test = "nginx"
+        app = "nginx"
       }
     }
 
@@ -56,15 +73,13 @@ resource "kubernetes_deployment_v1" "nginx" {
     }
   }
 }
-data "kubernetes_namespace_v1" "nginx-tf" {
-  metadata {
-    name = "nginx-tf"
-  }
-}
+
+
 
 resource "kubernetes_service_v1" "nginx" {
   metadata {
     name = "nginx"
+    namespace = "nginx-tf"
   }
   spec {
     port {
@@ -79,7 +94,8 @@ resource "kubernetes_service_v1" "nginx" {
 resource "kubernetes_ingress_v1" "nginx" {
   wait_for_load_balancer = true
   metadata {
-    app = "nginx"
+    name = "nginx"
+    namespace = "nginx-tf"
   }
   spec {
     ingress_class_name = "nginx"

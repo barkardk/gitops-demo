@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1m0s
-  path: ./fluxcd/kustomize/common/nginx
+  path: ./fluxcd/kustomize/common/nginx/base
   prune: true
   sourceRef:
     kind: GitRepository

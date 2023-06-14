@@ -1,0 +1,5 @@
+kind: ""
+apiversion: ""
+resources:
+- crds.yaml
+- install.yaml

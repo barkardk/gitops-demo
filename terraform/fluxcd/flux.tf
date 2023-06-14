@@ -17,7 +17,7 @@ resource "kubectl_manifest" "fluxcd" {
 }
 
 data "kubectl_file_documents" "install_common" {
-  content = file("../../fluxcd/clusters/sandbox/sandbox/infrastructure.yaml")
+  content = file("../../fluxcd/clusters/sandbox/common.yaml")
 }
 
 resource "kubectl_manifest" "common" {
@@ -27,13 +27,13 @@ resource "kubectl_manifest" "common" {
   depends_on = [kubectl_manifest.fluxcd]
 }
 
-data "kubectl_file_documents" "install_infrastrucure" {
-  content = file("../../fluxcd/clusters/sandbox/sandbox/common.yaml")
+data "kubectl_file_documents" "install_infra" {
+  content = file("../../fluxcd/clusters/sandbox/infrastructure.yaml")
 }
 
 resource "kubectl_manifest" "infrastructure" {
-  count     = length(data.kubectl_file_documents.install_infrastrucure.documents)
-  yaml_body = element(data.kubectl_file_documents.install_infrastrucure, count.index)
+  count     = length(data.kubectl_file_documents.install_infra.documents)
+  yaml_body = element(data.kubectl_file_documents.install_infra.documents, count.index)
   override_namespace = "flux-system"
   depends_on = [kubectl_manifest.fluxcd]
 }

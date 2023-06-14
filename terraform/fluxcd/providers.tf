@@ -13,9 +13,14 @@ terraform {
     }
     kustomization = {
       source  = "kbst/kustomization"
-      version = "0.9.0"
-
+      version = ">= 0.9.0"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0"
+    }
+
   }
 }
 
+provider "kustomization" {}

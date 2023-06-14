@@ -11,3 +11,17 @@ spec:
     kind: GitRepository
     name: flux-demo
   targetNamespace: redis
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: linkerd
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  path: ./fluxcd/kustomize/infrastructure/linkerd
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-demo
+  targetNamespace: linkerd

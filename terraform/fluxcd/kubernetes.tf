@@ -1,7 +1,3 @@
-provider "kubernetes" {
-  config_path    = "~/.kube/config"
-}
-
 resource "kubernetes_namespace_v1" "nginx" {
   metadata {
     annotations = {
@@ -14,6 +10,7 @@ resource "kubernetes_namespace_v1" "nginx" {
 
     name = "nginx-tf"
   }
+  depends_on = [google_container_node_pool.primary_nodes]
 }
 
 resource "kubernetes_deployment_v1" "nginx" {
@@ -72,6 +69,7 @@ resource "kubernetes_deployment_v1" "nginx" {
       }
     }
   }
+  depends_on = [google_container_node_pool.primary_nodes]
 }
 
 
@@ -89,10 +87,11 @@ resource "kubernetes_service_v1" "nginx" {
     }
     type = "ClusterIP"
   }
+  depends_on = [google_container_node_pool.primary_nodes]
 }
 
 resource "kubernetes_ingress_v1" "nginx" {
-  wait_for_load_balancer = true
+  wait_for_load_balancer = false
   metadata {
     name = "nginx"
     namespace = "nginx-tf"
@@ -115,10 +114,8 @@ resource "kubernetes_ingress_v1" "nginx" {
       }
     }
   }
+  depends_on = [google_container_node_pool.primary_nodes]
 }
 
 
 
-output "load_balancer" {
-  value = kubernetes_ingress_v1.nginx.status
-}

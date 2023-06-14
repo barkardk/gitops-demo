@@ -1,3 +1,4 @@
+data "google_client_config" "provider" {}
 
 # GKE cluster
 resource "google_container_cluster" "primary" {
@@ -28,7 +29,6 @@ resource "google_container_node_pool" "primary_nodes" {
   location   = var.region
   cluster    = google_container_cluster.primary.name
   node_count = var.gke_num_nodes
-
   node_config {
     service_account = google_service_account.primary.email
     oauth_scopes    = [

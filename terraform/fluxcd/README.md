@@ -1,5 +1,5 @@
 # gitops-demo-flux
-Demo repo with flux cd pipelines
+Demo repo with flux cd pipelines.
 
 ## Prerequisites
 ### You must have logged in to gcloud first 

@@ -1,6 +1,8 @@
 kind: ""
 apiversion: ""
+namespace: redis
 resources:
+- namespace.yaml
 - configmap.yaml
 - health-configmap.yaml
 - redis-master-statefulset.yaml

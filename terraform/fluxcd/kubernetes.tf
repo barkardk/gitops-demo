@@ -80,6 +80,9 @@ resource "kubernetes_service_v1" "nginx" {
     namespace = "nginx-tf"
   }
   spec {
+    selector = {
+      app = "nginx"
+    }
     port {
       port        = 80
       target_port = 80
@@ -116,6 +119,3 @@ resource "kubernetes_ingress_v1" "nginx" {
   }
   depends_on = [google_container_node_pool.primary_nodes]
 }
-
-
-

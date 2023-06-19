@@ -1,11 +1,3 @@
-provider "kubectl" {
-  host                   = module.gke_auth.host
-  cluster_ca_certificate = module.gke_auth.cluster_ca_certificate
-  token                  = module.gke_auth.token
-  load_config_file       = false
-}
-
-
 data "kubectl_path_documents" "install_fluxcd" {
   pattern = "../../fluxcd/clusters/sandbox/flux-system/*.yaml"
 }

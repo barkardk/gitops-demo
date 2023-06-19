@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: nginx
   labels:
-    run: nginx
+    app: nginx
 spec:
   ports:
     - port: 80
       protocol: TCP
   type: LoadBalancer
   selector:
-    run: nginx
+    app: nginx

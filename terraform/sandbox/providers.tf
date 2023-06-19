@@ -1,0 +1,14 @@
+terraform {
+  required_version = ">= 0.14"
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = ">= 4.69.1"
+    }
+  }
+  backend "gcs" {
+    bucket = "changeme"
+    prefix = "argocd-terraform"
+  }
+}
+

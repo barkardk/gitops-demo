@@ -1,12 +1,12 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-  name: flux-demo
+  name: dev
   namespace: flux-system
 spec:
   interval: 1m0s
   ref:
-    branch: main
+    branch: dev
   secretRef:
     name: flux-system
   url: ssh://git@github.com/barkardk/gitops-demo-flux
